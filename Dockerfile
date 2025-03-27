@@ -43,6 +43,9 @@ RUN	apk -qq update \
     | unzip -o -d '/var/www/drupal/tmp_config' -' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/configs/* /var/www/drupal/config/sync/' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/composer* /var/www/drupal/' \
+    # Init test data
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/data /var/www/drupal/' \
+    # Cleanup
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/tmp_config' \
     # Modules
     && su nginx -s /bin/bash -c 'composer install -n -d /var/www/drupal' \

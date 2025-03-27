@@ -19,13 +19,21 @@ docker run --network=host -it archaeo-vault:latest bash
 
 # TO DO
 
-- [ ] Rewrite gitlab cli do github action (or get access to gitlab)
+- [ ] Rewrite gitlab cli to github action (or get access to gitlab) - what registry should the built image be published to?
 
-- [ ] Include all modules used all across Digitalia in composer files
+- [ ] Which Kubernetes will the prototype run in?
+
+- [ ] Include all modules used all across Digitalia in composer files - replicate what we did with Ansible?
 
 - [ ] Test local development and merging of features
 
 - [ ] Fix HTTP vs HTTPs issue
+
+- [ ] Test data init with migrations
+
+- [ ] smoother startup with less fuss?
+
+- [ ] test deployment
 
 # Troubleshooting for MacOS/M1
 
