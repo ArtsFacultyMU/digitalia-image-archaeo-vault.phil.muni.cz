@@ -1,0 +1,60 @@
+#!/bin/sh -e
+
+# This is the first program launched at container start.
+# We don't know where our binaries are and we cannot guarantee
+# that the default PATH can access them.
+# So this script needs to be entirely self-contained until it has
+# at least /command, /usr/bin and /bin in its PATH.
+
+addpath () {
+  x="$1"
+  IFS=:
+  set -- $PATH
+  IFS=
+  while test "$#" -gt 0 ; do
+    if test "$1" = "$x" ; then
+      return
+    fi
+    shift
+  done
+  PATH="${x}:$PATH"
+}
+
+if test -z "$PATH" ; then
+  PATH=/bin
+fi
+
+addpath /bin
+addpath /usr/bin
+addpath /command
+export PATH
+
+# Islandora
+if [ -f "/var/www/drupal/composer.json" ]; then
+  echo -e "\033[0;32mIslandora detected\033[0m";
+elif ! mountpoint -q "/var/www/drupal" ; then
+  echo -e "\033[0;32mStarting Islandora inside Docker filesystem\033[0m"
+  ln -s "/var/www/drupal.docker" "/var/www/drupal"
+else
+  echo -e "\033[0;32mCreating Islandora\033[0m"
+  cp -Ra "/var/www/drupal.docker" -T "/var/www/drupal"
+fi
+# Islandora
+
+# Wait for the Docker readiness notification, if any
+
+if read _ 2>/dev/null <&3 ; then
+  exec 3<&-
+fi
+
+
+# Now we're good: s6-overlay-suexec is accessible via PATH, as are
+# all our binaries.
+# Run preinit as root, then run stage0 as the container's user (can be
+# root, can be a normal user).
+
+exec s6-overlay-suexec \
+  ' /package/admin/s6-overlay-3.2.0.2/libexec/preinit' \
+  '' \
+  /package/admin/s6-overlay-3.2.0.2/libexec/stage0 \
+  "$@"
