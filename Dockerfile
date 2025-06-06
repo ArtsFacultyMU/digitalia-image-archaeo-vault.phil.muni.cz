@@ -12,7 +12,7 @@ FROM islandora/drupal:${VERSION}
 RUN printf "Running on ${BUILDPLATFORM:-linux/amd64}, building for ${TARGETPLATFORM:-linux/amd64}\n$(uname -a).\n"
 
 # Basic info
-LABEL maintainer="Jan Adler <adler@isc.muni.cz>" \
+LABEL maintainer="Jan Adler <adler@ics.muni.cz>" \
     org.label-schema.build-date=${BUILD_DATE} \
     org.label-schema.name=${NAME} \
     org.label-schema.description="ArchaeoVault" \
@@ -59,6 +59,7 @@ RUN	apk -qq update \
     # Custom modules
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
+    && su nginx -s /bin/bash -c 'git clone -q -b dev_sip https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
     # Custom themes
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
