@@ -3,7 +3,7 @@ ARG NAME=archaeo-vault
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VCS_URL
-ARG VERSION=3.4.15
+ARG VERSION=3.5.7
 ARG SITE_VERSION=1.9.0
 
 # Islandora Drupal
@@ -12,7 +12,7 @@ FROM islandora/drupal:${VERSION}
 RUN printf "Running on ${BUILDPLATFORM:-linux/amd64}, building for ${TARGETPLATFORM:-linux/amd64}\n$(uname -a).\n"
 
 # Basic info
-LABEL maintainer="Jan Adler <adler@ics.muni.cz>" \
+LABEL maintainer="Jan Adler <adler@phil.muni.cz>" \
     org.label-schema.build-date=${BUILD_DATE} \
     org.label-schema.name=${NAME} \
     org.label-schema.description="ArchaeoVault" \
@@ -30,9 +30,10 @@ WORKDIR "/var/www"
 COPY content/ /
 
 # Install packages
-RUN	apk -qq update \
+RUN    apk -qq update \
     && apk -qq upgrade \
     && apk -qq add coreutils \
+    && apk -qq add gettext-envsubst \
     # Cleanup
     && rm -rf /var/cache/apk/* \
     # Composer will refuse to install to existing directory even when empty :-/
@@ -65,4 +66,9 @@ RUN	apk -qq update \
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
     # Patches
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-patches.git /var/www/drupal/patches'
-RUN	mv "/var/www/drupal" "/var/www/drupal.docker"
+
+#COPY templated_settings.php /var/www/drupal/web/sites/default/templated_settings.php
+
+RUN   mv "/var/www/drupal" "/var/www/drupal.docker"
+
+    #su nginx -s /bin/bash -c 'cd /var/www/drupal/web/sites/default/ && cat templated_settings.php | envsubst '${DRUPAL_DEFAULT_DB_HOST}${DRUPAL_DEFAULT_DB_PORT}${DRUPAL_DEFAULT_DB_USER}${DRUPAL_DEFAULT_DB_PASSWORD}' >> settings.php' \
