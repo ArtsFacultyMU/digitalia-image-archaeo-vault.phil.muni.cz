@@ -3,7 +3,7 @@ ARG NAME=archaeo-vault
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VCS_URL
-ARG VERSION=3.5.7
+ARG VERSION=4.3.13
 ARG SITE_VERSION=1.9.0
 
 # Islandora Drupal
@@ -30,22 +30,24 @@ WORKDIR "/var/www"
 COPY content/ /
 
 # Install packages
-RUN    apk -qq update \
+RUN    apk -qq update  \
     && apk -qq upgrade \
     && apk -qq add coreutils \
-    && apk -qq add gettext-envsubst \
+    && apk -qq add vim \
+    && apk -qq add gettext-envsubst  \
     # Cleanup
     && rm -rf /var/cache/apk/* \
     # Composer will refuse to install to existing directory even when empty :-/
     && rmdir /var/www/drupal/web/libraries /var/www/drupal/web /var/www/drupal/config \
     && su nginx -s /bin/bash -c 'composer -q -n create-project islandora/islandora-starter-site:${SITE_VERSION} /var/www/drupal' \
     # Synchronize ArchaeoVault configuration
-    && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/main.zip' \
-    | unzip -o -d '/var/www/drupal/tmp_config' -' \
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/configs/* /var/www/drupal/config/sync/' \
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/composer* /var/www/drupal/' \
+    && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/postgres-patch.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-postgres-patch/configs/* /var/www/drupal/config/sync/' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-postgres-patch/composer* /var/www/drupal/' \
+    # Patches
+    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-patches.git /var/www/drupal/patches' \
     # Init test data
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/data /var/www/drupal/' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-postgres-patch/data /var/www/drupal/' \
     # Cleanup
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/tmp_config' \
     # Modules
@@ -63,9 +65,7 @@ RUN    apk -qq update \
     && su nginx -s /bin/bash -c 'git clone -q -b dev_sip https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
     # Custom themes
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
-    # Patches
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-patches.git /var/www/drupal/patches'
+    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific'
 
 #COPY templated_settings.php /var/www/drupal/web/sites/default/templated_settings.php
 
