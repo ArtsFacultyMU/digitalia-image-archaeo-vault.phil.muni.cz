@@ -14,6 +14,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag archaeo-vault-drupal:$(date +%s)
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: cerit.io
+          username: xadler
+          password: ${{ secrets.HARBOR_KEY }}
+
+      -
+        uses: docker/build-push-action@v6
+        name: Build and push
+        with:
+          tags: cerit.io/xadler/archaeo-vault-drupal:git-action-test
+          file: Dockerfile
+          push: true
+          
