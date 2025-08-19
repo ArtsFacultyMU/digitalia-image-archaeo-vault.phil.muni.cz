@@ -31,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v6
         name: Build and push
         with:
-          tags: archaeo-vault-drupal:latest
+          tags: xadler/archaeo-vault-drupal:latest
           file: Dockerfile
           push: true
           
