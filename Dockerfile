@@ -52,13 +52,6 @@ RUN    apk -qq update  \
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/tmp_config' \
     # Modules
     && su nginx -s /bin/bash -c 'composer install -n -d /var/www/drupal' \
-    # Workarounds
-    # Fails during configuration setup
-    && su nginx -s /bin/bash -c 'rm -f /var/www/drupal/config/sync/*.media_library.yml /var/www/drupal/config/sync/media_library.settings.yml' \
-    && su nginx -s /bin/bash -c 'rm -f /var/www/drupal/config/sync/admin_toolbar_search.settings.yml /var/www/drupal/config/sync/admin_toolbar_tools.settings.yml' \
-    && su nginx -s /bin/bash -c 'rm -f /var/www/drupal/config/sync/*pathauto*.yml' \
-    # Module was deprecated and no longer exists
-    && su nginx -s /bin/bash -c 'sed -i "/  layout_builder_expose_all_field_blocks/d" /var/www/drupal/config/sync/core.extension.yml' \
     # Custom modules
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
@@ -68,6 +61,8 @@ RUN    apk -qq update  \
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific'
 
 #COPY templated_settings.php /var/www/drupal/web/sites/default/templated_settings.php
+COPY additional-variables.conf.tmpl /etc/confd/templates/additional-variables.conf.tmpl
+COPY additional-variables.conf.toml /etc/confd/conf.d/additional-variables.conf.toml
 
 RUN   mv "/var/www/drupal" "/var/www/drupal.docker"
 
