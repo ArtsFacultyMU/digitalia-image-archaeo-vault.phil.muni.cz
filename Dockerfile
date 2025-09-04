@@ -30,7 +30,7 @@ WORKDIR "/var/www"
 COPY content/ /
 
 # Install packages
-RUN    apk -qq update  \
+RUN    apk -qq update \
     && apk -qq upgrade \
     && apk -qq add coreutils \
     && apk -qq add vim \
@@ -41,13 +41,13 @@ RUN    apk -qq update  \
     && rmdir /var/www/drupal/web/libraries /var/www/drupal/web /var/www/drupal/config \
     && su nginx -s /bin/bash -c 'composer -q -n create-project islandora/islandora-starter-site:${SITE_VERSION} /var/www/drupal' \
     # Synchronize ArchaeoVault configuration
-    && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/postgres-patch.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-postgres-patch/configs/* /var/www/drupal/config/sync/' \
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-postgres-patch/composer* /var/www/drupal/' \
+    && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/main.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/configs/* /var/www/drupal/config/sync/' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/composer* /var/www/drupal/' \
     # Patches
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-patches.git /var/www/drupal/patches' \
     # Init test data
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-postgres-patch/data /var/www/drupal/' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/data /var/www/drupal/' \
     # Cleanup
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/tmp_config' \
     # Modules
@@ -63,6 +63,13 @@ RUN    apk -qq update  \
 #COPY templated_settings.php /var/www/drupal/web/sites/default/templated_settings.php
 COPY additional-variables.conf.tmpl /etc/confd/templates/additional-variables.conf.tmpl
 COPY additional-variables.conf.toml /etc/confd/conf.d/additional-variables.conf.toml
+
+ENV \
+    DRUPAL_DEFAULT_AAI_CLIENT_SECRET=NONE \
+    DRUPAL_DEFAULT_HANDLE_PRIVATE_KEY=NONE \
+    DRUPAL_DEFAULT_CANTALOUPE_URL=NONE \
+    DRUPAL_DEFAULT_GEOCODER_USER_AGENT=NONE \
+    DRUPAL_DEFAULT_GEOCODER_REFERER=NONE
 
 RUN   mv "/var/www/drupal" "/var/www/drupal.docker"
 
