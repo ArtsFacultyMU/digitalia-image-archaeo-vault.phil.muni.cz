@@ -3,8 +3,8 @@ ARG NAME=archaeo-vault
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VCS_URL
-ARG VERSION=5.1.5
-ARG SITE_VERSION=1.9.0
+ARG VERSION=6.1.2
+ARG SITE_VERSION=1.10.0
 
 # Islandora Drupal
 FROM islandora/drupal:${VERSION}
@@ -40,6 +40,7 @@ RUN    apk -qq update \
     # Composer will refuse to install to existing directory even when empty :-/
     && rmdir /var/www/drupal/web/libraries /var/www/drupal/web /var/www/drupal/config \
     && su nginx -s /bin/bash -c 'composer -q -n create-project islandora/islandora-starter-site:${SITE_VERSION} /var/www/drupal' \
+    && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/config/sync/*' \
     # Synchronize ArchaeoVault configuration
     && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/main.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/configs/* /var/www/drupal/config/sync/' \
@@ -55,6 +56,8 @@ RUN    apk -qq update \
     # Custom modules
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
+    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_entity.git /var/www/drupal/web/modules/custom/digitalia_muni_entity' \
+    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_fits_generator.git /var/www/drupal/web/modules/custom/digitalia_muni_fits_generator' \
     && su nginx -s /bin/bash -c 'git clone -q -b dev_sip https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
     # Custom themes
     && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
@@ -65,6 +68,7 @@ COPY additional-variables.conf.tmpl /etc/confd/templates/additional-variables.co
 COPY additional-variables.conf.toml /etc/confd/conf.d/additional-variables.conf.toml
 
 ENV \
+    DRUPAL_DEFAULT_DOI_PASSWORD=NONE \
     DRUPAL_DEFAULT_AAI_CLIENT_SECRET=NONE \
     DRUPAL_DEFAULT_HANDLE_PRIVATE_KEY=NONE \
     DRUPAL_DEFAULT_CANTALOUPE_URL=NONE \
