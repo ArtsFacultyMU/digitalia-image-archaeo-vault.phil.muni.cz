@@ -33,7 +33,12 @@ export PATH
 if [ -f "/var/www/drupal/web/sites/default/settings.php" ]; then
   echo -e "\033[0;32mIslandora detected\033[0m";
   rm "/var/www/drupal.docker/web/sites/default/settings.php"
-  echo -e "\033[0;32mCopying drupal files\033[0m";
+  echo -e "\033[0;32mCopying drupal files 1\033[0m";
+  if [ -d "/var/www/drupal/web/sites/default/files" ]; then
+    cp -Ra "/var/www/drupal/web/sites/default/files" -T "/var/www/drupal.docker/web/sites/default/"
+  fi
+  rm -rf "/var/www/drupal/*"
+  echo -e "\033[0;32mCopying drupal files 2\033[0m";
   cp -Ra "/var/www/drupal.docker" -T "/var/www/drupal"
 elif ! mountpoint -q "/var/www/drupal" ; then
   echo -e "\033[0;32mStarting Islandora inside Docker filesystem\033[0m"
