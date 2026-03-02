@@ -1,13 +1,15 @@
 # Envars
+ARG VERSION=6.1.2
+
+
+# Islandora Drupal
+FROM islandora/drupal:${VERSION}
+
 ARG NAME=archaeo-vault
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VCS_URL
-ARG VERSION=6.1.2
 ARG SITE_VERSION=1.10.0
-
-# Islandora Drupal
-FROM islandora/drupal:${VERSION}
 
 RUN printf "Running on ${BUILDPLATFORM:-linux/amd64}, building for ${TARGETPLATFORM:-linux/amd64}\n$(uname -a).\n"
 
@@ -29,6 +31,17 @@ WORKDIR "/var/www"
 
 COPY content/ /
 
+# Repo branch variables (tags can also be used)
+ARG BRANCH_GENERAL_THEME=main
+ARG BRANCH_THEME=main
+ARG BRANCH_CONF=main
+ARG BRANCH_PATCHES=main
+ARG BRANCH_TOKEN=master
+ARG BRANCH_GENERAL_INCLUDES=main
+ARG BRANCH_ENTITY=main
+ARG BRANCH_FITS_GENERATOR=main
+ARG BRANCH_WORKBENCH_INGEST=dev_sip
+
 # Install packages
 RUN    apk -qq update \
     && apk -qq upgrade \
@@ -42,26 +55,26 @@ RUN    apk -qq update \
     && su nginx -s /bin/bash -c 'composer -q -n create-project islandora/islandora-starter-site:${SITE_VERSION} /var/www/drupal' \
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/config/sync/*' \
     # Synchronize ArchaeoVault configuration
-    && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/main.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/configs/* /var/www/drupal/config/sync/' \
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/composer* /var/www/drupal/' \
+    && su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/${BRANCH_CONF}.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-${BRANCH_CONF}/configs/* /var/www/drupal/config/sync/' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-${BRANCH_CONF}/composer* /var/www/drupal/' \
     # Patches
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-patches.git /var/www/drupal/patches' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_PATCHES} https://github.com/ArtsFacultyMU/digitalia-patches.git /var/www/drupal/patches' \
     # Init test data
-    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-main/data /var/www/drupal/' \
+    && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/digitalia-config-archaeo-vault.phil.muni.cz-${BRANCH_CONF}/data /var/www/drupal/' \
     # Cleanup
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/tmp_config' \
-    # Modules
-    && su nginx -s /bin/bash -c 'composer install -n -d /var/www/drupal' \
     # Custom modules
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_entity.git /var/www/drupal/web/modules/custom/digitalia_muni_entity' \
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_fits_generator.git /var/www/drupal/web/modules/custom/digitalia_muni_fits_generator' \
-    && su nginx -s /bin/bash -c 'git clone -q -b dev_sip https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_TOKEN}            https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_INCLUDES} https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_ENTITY}           https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_entity.git /var/www/drupal/web/modules/custom/digitalia_muni_entity' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_FITS_GENERATOR}   https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_fits_generator.git /var/www/drupal/web/modules/custom/digitalia_muni_fits_generator' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_WORKBENCH_INGEST} https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
     # Custom themes
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
-    && su nginx -s /bin/bash -c 'git clone -q https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific'
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_THEME}    https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_THEME}            https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
+    # Modules
+    && su nginx -s /bin/bash -c 'composer install -n -d /var/www/drupal'
 
 #COPY templated_settings.php /var/www/drupal/web/sites/default/templated_settings.php
 COPY additional-variables.conf.tmpl /etc/confd/templates/additional-variables.conf.tmpl

@@ -3,8 +3,8 @@ name: Docker Image CI
 on:
   #push:
   #  branches: [ "main" ]
-  #pull_request:
-  #  branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -29,4 +29,4 @@ jobs:
           tags: cerit.io/xadler/archaeo-vault-drupal:git-action-test
           file: Dockerfile
           push: true
-          
+          #build-args: BRANCH_CONF=test
