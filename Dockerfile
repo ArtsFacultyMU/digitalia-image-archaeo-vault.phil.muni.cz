@@ -29,12 +29,12 @@ WORKDIR "/var/www"
 
 COPY content/ /
 
-# Repo branch variables
+# Repo branch variables (tags can also be used)
 ARG BRANCH_GENERAL_THEME=main
 ARG BRANCH_THEME=main
 ARG BRANCH_CONF=main
 ARG BRANCH_PATCHES=main
-ARG BRANCH_TOKEN=main
+ARG BRANCH_TOKEN=master
 ARG BRANCH_GENERAL_INCLUDES=main
 ARG BRANCH_ENTITY=main
 ARG BRANCH_FITS_GENERATOR=main
