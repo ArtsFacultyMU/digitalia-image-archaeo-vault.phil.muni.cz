@@ -30,5 +30,6 @@ jobs:
           file: Dockerfile
           push: true
           build-args:
-            - BRANCH_CONF=test
+            BRANCH_CONF=test
+            BRANCH_TOKEN=master
           
