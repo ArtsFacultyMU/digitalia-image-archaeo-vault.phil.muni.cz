@@ -29,4 +29,6 @@ jobs:
           tags: cerit.io/xadler/archaeo-vault-drupal:git-action-test
           file: Dockerfile
           push: true
+          build-args:
+            - BRANCH_CONF=test
           
