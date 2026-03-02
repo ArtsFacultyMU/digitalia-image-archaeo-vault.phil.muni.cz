@@ -1,13 +1,14 @@
 # Envars
+ARG VERSION=6.1.2
+
+# Islandora Drupal
+FROM islandora/drupal:${VERSION}
+
 ARG NAME=archaeo-vault
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VCS_URL
-ARG VERSION=6.1.2
 ARG SITE_VERSION=1.10.0
-
-# Islandora Drupal
-FROM islandora/drupal:${VERSION}
 
 RUN printf "Running on ${BUILDPLATFORM:-linux/amd64}, building for ${TARGETPLATFORM:-linux/amd64}\n$(uname -a).\n"
 
