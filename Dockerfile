@@ -1,6 +1,7 @@
 # Envars
 ARG VERSION=6.1.2
 
+
 # Islandora Drupal
 FROM islandora/drupal:${VERSION}
 
