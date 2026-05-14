@@ -43,6 +43,7 @@ ARG BRANCH_FITS_GENERATOR=main
 ARG BRANCH_WORKBENCH_INGEST=dev_sip
 ARG BRANCH_DATASET_CCMM=main
 ARG BRANCH_DATASET_DOI=main
+ARG BRANCH_AUTOCOMPLETE_REMOTE=main
 
 # Install packages
 RUN    apk -qq update \
@@ -69,16 +70,17 @@ RUN    apk -qq update \
     # Cleanup
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/tmp_config' \
     # Custom modules
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_TOKEN}            https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_INCLUDES} https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_ENTITY}           https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_entity.git /var/www/drupal/web/modules/custom/digitalia_muni_entity' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_FITS_GENERATOR}   https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_fits_generator.git /var/www/drupal/web/modules/custom/digitalia_muni_fits_generator' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_WORKBENCH_INGEST} https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_CCMM}     https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_ccmm.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_ccmm' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_DOI}      https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_doi.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_doi' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_TOKEN}               https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_token.git /var/www/drupal/web/modules/custom/digitalia_muni_token' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_INCLUDES}    https://github.com/ArtsFacultyMU/digitalia_module-digitalia_muni_general_includes.git /var/www/drupal/web/modules/custom/digitalia_muni_general_includes' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_ENTITY}              https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_entity.git /var/www/drupal/web/modules/custom/digitalia_muni_entity' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_FITS_GENERATOR}      https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_fits_generator.git /var/www/drupal/web/modules/custom/digitalia_muni_fits_generator' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_WORKBENCH_INGEST}    https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_workbench_ingest.git /var/www/drupal/web/modules/custom/digitalia_muni_workbench_ingest' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_CCMM}        https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_ccmm.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_ccmm' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_DOI}         https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_doi.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_doi' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_AUTOCOMPLETE_REMOTE} https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_autocomplete_remote.git /var/www/drupal/web/modules/custom/digitalia_muni_autocomplete_remote' \
     # Custom themes
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_THEME}    https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_THEME}            https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_THEME}       https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_THEME}               https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
     # Modules
     && su nginx -s /bin/bash -c 'composer install -n -d /var/www/drupal'
 
