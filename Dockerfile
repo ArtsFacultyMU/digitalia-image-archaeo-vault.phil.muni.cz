@@ -53,13 +53,11 @@ RUN    apk -qq update \
     && apk -qq add gettext-envsubst  \
     # Cleanup
     && rm -rf /var/cache/apk/* \
-    && su nginx -s /bin/bash -c 'git --version' \
     # Composer will refuse to install to existing directory even when empty :-/
     && rmdir /var/www/drupal/web/libraries /var/www/drupal/web /var/www/drupal/config \
     && su nginx -s /bin/bash -c 'composer -q -n create-project islandora/islandora-starter-site:${SITE_VERSION} /var/www/drupal' \
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/config/sync/*' \
     # Synchronize ArchaeoVault configuration
-    #&& su nginx -s /bin/bash -c 'wget --no-cookies -O- 'https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz/archive/refs/heads/${BRANCH_CONF}.zip' | unzip -o -d '/var/www/drupal/tmp_config' -' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_CONF}            https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz.git /var/www/drupal/tmp_config' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/configs/* /var/www/drupal/config/sync/' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/composer* /var/www/drupal/' \
