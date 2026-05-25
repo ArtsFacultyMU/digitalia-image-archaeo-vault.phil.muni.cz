@@ -1,5 +1,5 @@
 # Envars
-ARG VERSION=6.3.8
+ARG VERSION=6.4.2
 
 
 # Islandora Drupal
@@ -44,6 +44,7 @@ ARG BRANCH_WORKBENCH_INGEST=dev_sip
 ARG BRANCH_DATASET_CCMM=main
 ARG BRANCH_DATASET_DOI=main
 ARG BRANCH_AUTOCOMPLETE_REMOTE=main
+ARG BRANCH_NFIELD_AGENT=main
 
 # Install packages
 RUN    apk -qq update \
@@ -58,7 +59,7 @@ RUN    apk -qq update \
     && su nginx -s /bin/bash -c 'composer -q -n create-project islandora/islandora-starter-site:${SITE_VERSION} /var/www/drupal' \
     && su nginx -s /bin/bash -c 'rm -rf /var/www/drupal/config/sync/*' \
     # Synchronize ArchaeoVault configuration
-    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_CONF}            https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz.git /var/www/drupal/tmp_config' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_CONF} https://github.com/ArtsFacultyMU/digitalia-config-archaeo-vault.phil.muni.cz.git /var/www/drupal/tmp_config' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/configs/* /var/www/drupal/config/sync/' \
     && su nginx -s /bin/bash -c 'mv /var/www/drupal/tmp_config/composer* /var/www/drupal/' \
     # Patches
@@ -76,6 +77,7 @@ RUN    apk -qq update \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_CCMM}        https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_ccmm.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_ccmm' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_DOI}         https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_doi.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_doi' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_AUTOCOMPLETE_REMOTE} https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_autocomplete_remote.git /var/www/drupal/web/modules/custom/digitalia_muni_autocomplete_remote' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_NFIELD_AGENT}        https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_nfield_agent.git /var/www/drupal/web/modules/custom/digitalia_muni_nfield_agent' \
     # Custom themes
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_THEME}       https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_THEME}               https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
