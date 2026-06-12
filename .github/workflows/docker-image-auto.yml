@@ -8,7 +8,11 @@ on:
   workflow_dispatch:
 
 inputs:
-  TAG: git-action-test
+  TAG:
+    description: "Tag to assign to built image"
+    default: "git-action-test"
+    required: true
+
 
 jobs:
 
@@ -29,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v7
         name: Build and push
         with:
-          tags: "cerit.io/xadler/archaeo-vault-drupal:$TAG"
+          tags: "cerit.io/xadler/archaeo-vault-drupal:{{ $inputs.TAG }}"
           file: Dockerfile
           push: true
           sbom: true
