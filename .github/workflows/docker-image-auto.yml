@@ -46,6 +46,6 @@ jobs:
           file: Dockerfile
           push: true
           sbom: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
           #build-args: BRANCH_CONF=test
 
