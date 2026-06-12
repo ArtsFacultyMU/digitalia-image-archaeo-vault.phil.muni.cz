@@ -7,6 +7,9 @@ on:
   #  branches: [ "main" ]
   workflow_dispatch:
 
+inputs:
+  TAG: git-action-test
+
 jobs:
 
   build:
@@ -26,7 +29,7 @@ jobs:
         uses: docker/build-push-action@v7
         name: Build and push
         with:
-          tags: cerit.io/xadler/archaeo-vault-drupal:git-action-test
+          tags: "cerit.io/xadler/archaeo-vault-drupal:$TAG"
           file: Dockerfile
           push: true
           sbom: true
