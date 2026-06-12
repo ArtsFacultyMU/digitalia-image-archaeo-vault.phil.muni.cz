@@ -29,12 +29,23 @@ jobs:
           password: ${{ secrets.HARBOR_KEY }}
 
       -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      -
+        name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
+
+      -
         uses: docker/build-push-action@v7
         name: Build and push
         with:
-          tags: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
           file: Dockerfile
           push: true
           sbom: true
+          tags: ${{ steps.meta.outputs.tags }}
           #build-args: BRANCH_CONF=test
 
