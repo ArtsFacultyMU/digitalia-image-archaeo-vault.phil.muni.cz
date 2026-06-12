@@ -1,18 +1,17 @@
 name: Automatic image build
 
+inputs:
+  tag:
+    description: "Tag to assign to built image"
+    default: "git-action-test"
+    required: true
+
 on:
   #push:
   #  branches: [ "main" ]
   #pull_request:
   #  branches: [ "main" ]
   workflow_dispatch:
-
-inputs:
-  TAG:
-    description: "Tag to assign to built image"
-    default: "git-action-test"
-    required: true
-
 
 jobs:
 
@@ -33,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v7
         name: Build and push
         with:
-          tags: "cerit.io/xadler/archaeo-vault-drupal:{{ $inputs.TAG }}"
+          tags: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
           file: Dockerfile
           push: true
           sbom: true
