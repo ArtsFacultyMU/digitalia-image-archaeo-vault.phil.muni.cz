@@ -1,17 +1,15 @@
 name: Automatic image build
 
-
 on:
-  #push:
-  #  branches: [ "main" ]
-  #pull_request:
-  #  branches: [ "main" ]
   workflow_dispatch:
     inputs:
       tag:
         description: "Tag to assign to built image"
         default: "git-action-test"
         required: true
+      branch_conf:
+        description: "Branch or tag of config repo"
+        default: "main"
 
 jobs:
 
@@ -35,5 +33,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
-          #build-args: BRANCH_CONF=test
+          build-args: BRANCH_CONF=${{ inputs.branch_conf }}
 
