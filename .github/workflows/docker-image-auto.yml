@@ -1,17 +1,15 @@
 name: Automatic image build
 
-inputs:
-  tag:
-    description: "Tag to assign to built image"
-    default: "git-action-test"
-    required: true
-
 on:
-  #push:
-  #  branches: [ "main" ]
-  #pull_request:
-  #  branches: [ "main" ]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to assign to built image"
+        default: "git-action-test"
+        required: true
+      branch_conf:
+        description: "Branch or tag of config repo"
+        default: "main"
 
 jobs:
 
@@ -22,7 +20,7 @@ jobs:
     steps:
       -
         name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: cerit.io
           username: xadler
@@ -32,9 +30,8 @@ jobs:
         uses: docker/build-push-action@v7
         name: Build and push
         with:
-          tags: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
           file: Dockerfile
           push: true
-          sbom: true
-          #build-args: BRANCH_CONF=test
+          tags: "cerit.io/xadler/archaeo-vault-drupal:${{ inputs.tag }}"
+          build-args: BRANCH_CONF=${{ inputs.branch_conf }}
 
