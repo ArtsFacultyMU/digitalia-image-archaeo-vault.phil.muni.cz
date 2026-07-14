@@ -34,17 +34,18 @@ COPY content/ /
 # Repo branch variables (tags can also be used)
 ARG BRANCH_GENERAL_THEME=v1.0.0
 ARG BRANCH_THEME=v1.0.0
-ARG BRANCH_CONF=v0.1.5-r5
+ARG BRANCH_CONF=v0.1.6
 ARG BRANCH_PATCHES=v1.0.0
 ARG BRANCH_TOKEN=v1.0.0
 ARG BRANCH_GENERAL_INCLUDES=v1.0.0
 ARG BRANCH_ENTITY=v1.0.0
 ARG BRANCH_FITS_GENERATOR=v1.0.0
 ARG BRANCH_WORKBENCH_INGEST=v0.1.0
-ARG BRANCH_DATASET_CCMM=v1.0.1
-ARG BRANCH_DATASET_DOI=v1.0.0
+ARG BRANCH_DATASET_CCMM=v1.0.2
+ARG BRANCH_DATASET_DOI=v1.1.0
 ARG BRANCH_AUTOCOMPLETE_REMOTE=v1.0.0
-ARG BRANCH_NFIELD_AGENT=v1.0.0
+ARG BRANCH_NFIELD_AGENT=v1.2.1
+ARG BRANCH_CUSTOM_FIELD_TYPES=v0.1.0
 
 # Install packages
 RUN    apk -qq update \
@@ -78,6 +79,7 @@ RUN    apk -qq update \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_DATASET_DOI}         https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_dataset_doi.git /var/www/drupal/web/modules/custom/digitalia_muni_dataset_doi' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_AUTOCOMPLETE_REMOTE} https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_autocomplete_remote.git /var/www/drupal/web/modules/custom/digitalia_muni_autocomplete_remote' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_NFIELD_AGENT}        https://github.com/ArtsFacultyMU/digitalia-module-digitalia_muni_nfield_agent.git /var/www/drupal/web/modules/custom/digitalia_muni_nfield_agent' \
+    && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_CUSTOM_FIELD_TYPES}  https://github.com/ArtsFacultyMU/digitalia-module-custom_field_types.git /var/www/drupal/web/modules/custom/digitalia_custom_field_types' \
     # Custom themes
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_GENERAL_THEME}       https://github.com/ArtsFacultyMU/digitalia-general-theme-muni_style.git /var/www/drupal/web/themes/custom/islandora_muni' \
     && su nginx -s /bin/bash -c 'git clone -q -b ${BRANCH_THEME}               https://github.com/ArtsFacultyMU/digitalia-theme-archaeo-vault.phil.muni.cz.git /var/www/drupal/web/themes/custom/islandora_muni/platform_specific' \
